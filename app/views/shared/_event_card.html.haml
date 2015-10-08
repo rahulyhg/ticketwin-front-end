@@ -1,0 +1,15 @@
+%a{href: "#{event_path(event)}"}
+  .event-card
+    .feature-image{ style: "background-image: url(#{event.image.url}); background-position: 0 0;" }
+    .feature-copy
+      %h3= event.title.upcase
+      %p= raw event.description.truncate(160)
+    .action-bar
+      .date
+        %span
+          &nbsp;
+          %i.fa.fa-lg.fa-fw.fa-calendar
+          = weekday_with_time(event.start_date)
+      .action-btn
+      %i.fa.fa-fw.fa-plus
+

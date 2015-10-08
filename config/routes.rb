@@ -1,56 +1,33 @@
-Rails.application.routes.draw do
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
+TicketWin::Application.routes.draw do
 
-  # You can have the root of your site routed with "root"
-  # root 'welcome#index'
+  root "pages#home"
+  get "inside", to: "pages#inside", as: "inside"
+  get "/contact", to: "pages#contact", as: "contact"
+  get "/terms", to: "pages#terms", as: "terms"
+    get "/organizer_terms", to: "pages#organizer_terms", as: "organizer_terms"
+  post "/emailconfirmation", to: "pages#email", as: "email_confirmation"
+  get "/checkin", to: "checkins#index", as: "checkin"
 
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
+  devise_for :users
 
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
+  namespace :admin do
+    root "base#index"
+    resources :users
+  end
 
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
 
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
+  resources :organizations, only: :show
+  resources :events do
+    resources :tickets, only: [:index, :update]
+  end
 
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
+  resources :orders, except: [:new, :show] do
+    member { get 'checkout' }
+  end
+  get '/redeem/:redemption_code', to: 'orders#redeem', as: 'redeem_order'
 
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
-
-  # Example resource route with concerns:
-  #   concern :toggleable do
-  #     post 'toggle'
-  #   end
-  #   resources :posts, concerns: :toggleable
-  #   resources :photos, concerns: :toggleable
-
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+  namespace :stripe do
+    get 'connect'
+    get 'confirm'
+  end
 end
